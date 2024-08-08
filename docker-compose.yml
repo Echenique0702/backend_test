@@ -3,15 +3,18 @@ version: "3.9"
 services:
   # Mongo DB
   mongo_database:
-    image: mongo
+    image: mongo:latest
+    container_name: mongo_db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: $DB_ROOT_USER
-      MONGO_INITDB_ROOT_PASSWORD: $DB_ROOT_PASSWORD
-      MONGO_INITDB_DATABASE: $DB
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./MongoConfig/mongo-entrypoint/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongo-entrypoint/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
-      - "27017:27017"
+      - "0.0.0.0:27017:27017"
     networks:
       - backend-network
 
