@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  # Mongo DB
+  mongo_database:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $DB_ROOT_USER
+      MONGO_INITDB_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE: $DB
+    volumes:
+      - ./MongoConfig/mongo-entrypoint/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - backend-network
+
+  # API FastAPI uvicorn in DEBUG mode
+  api:
+    build: ./api
+    container_name: backend_test
+    image: echenique/backend_test:latest
+    working_dir: /code
+    volumes:
+      - ./api:/code
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: mongo_database
+      DB: $DB
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    networks:
+      - backend-network
+    depends_on:
+      - mongo_database
+
+networks:
+  backend-network:
+    driver: bridge
