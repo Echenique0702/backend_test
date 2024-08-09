@@ -22,13 +22,13 @@ class CRUD():
             connection (Database): The connected MongoDB database object.
         """
         # Construct the MongoDB URI using the provided credentials
-        mongo_uri = f'mongodb://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:27017/{settings.DB}'
+        mongo_uri = f'mongodb://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:27017/{settings.DB_NAME}'
 
         # Create a MongoDB client
         client = AsyncIOMotorClient(mongo_uri)
 
         # Connect to the specified database
-        connection = client[settings.DB]
+        connection = client[settings.DB_NAME]
         
         # Return the database connection
         return connection
