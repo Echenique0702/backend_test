@@ -15,16 +15,13 @@ from models.users import (
 ) 
 
 # Database
-from database.api import CRUD
+from database.users import UsersDB
 
 from typing import List
 
 # Initial Settings Variables
 router = APIRouter()
-collection = 'users_collection'
-crud_db =CRUD(
-    collection_name=collection
-    ) 
+user_db =UsersDB() 
 
 
 # Endpoints Declarations
@@ -38,7 +35,7 @@ crud_db =CRUD(
 async def create_user(data: UsersModel = Body(...)):
     data = jsonable_encoder(data)
     try:
-        new_user = await crud_db.create(
+        new_user = await user_db.create(
             data = data
         )
         return new_user
@@ -55,7 +52,7 @@ async def create_user(data: UsersModel = Body(...)):
 )
 async def get_all_users():
     try:
-        all_users = await crud_db.get_all()
+        all_users = await user_db.get_all()
         return all_users
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
@@ -70,7 +67,7 @@ async def get_all_users():
 )
 async def get_user_by_id(id: str):
     try:
-        user = await crud_db.get_by_id(
+        user = await user_db.get_by_id(
             object_id=id
         )
         return user
@@ -88,7 +85,7 @@ async def get_user_by_id(id: str):
 async def update_user(id: str, data: UsersUpdateModel = Body(...)):
     data = data.dict()
     try:
-        updated_user = await crud_db.update_by_id(
+        updated_user = await user_db.update_by_id(
             object_id=id,
             data=data
         )
@@ -105,7 +102,7 @@ async def update_user(id: str, data: UsersUpdateModel = Body(...)):
 )
 async def delete_user(id: str):
     try:
-        user = await crud_db.delete_by_id(
+        user = await user_db.delete_by_id(
             object_id=id
         )
         return user
