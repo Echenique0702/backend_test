@@ -5,3 +5,5 @@ pydantic==2.1.1         # Data validation and settings management using Python t
 gunicorn==20.1.0        # WSGI HTTP server for UNIX
 python-dotenv==1.0.0    # Load environment variables from a .env file
 pydantic-settings==2.0.0
+pytest==8.3.2
+requests==2.32.3

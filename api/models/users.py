@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 import re
 from typing import Optional
 
@@ -14,14 +14,14 @@ class UsersModel(BaseModel):
     available: bool = Field(..., description='User Availability')
 
 
-    @validator('phone')
+    @field_validator('phone')
     def validate_phone(cls, value):
         phone_pattern = re.compile(r'^\(\d{3}\) \d{3}-\d{4}$')
         if not phone_pattern.match(value):
             raise ValueError('Phone number must be in the format (XXX) XXX-XXXX')
         return value
 
-    @validator('state')
+    @field_validator('state')
     def validate_state(cls, value):
         state_pattern = re.compile(r'^[A-Z]{2}$')
         if not state_pattern.match(value):
@@ -48,20 +48,20 @@ class UsersUpdateModel(BaseModel):
 
 
     # Phone validator for appropiate syntax
-    @validator('phone')
+    @field_validator('phone')
     def validate_phone(cls, value):
-        phone_pattern = compile(r'^\(\d{3}\) \d{3}-\d{4}$')
+        phone_pattern = re.compile(r'^\(\d{3}\) \d{3}-\d{4}$')
         if not phone_pattern.match(value):
             raise ValueError('Phone number must be in the format (XXX) XXX-XXXX')
         return value
 
-    # State validator for two-letter uppercases
-    @validator('state')
+    @field_validator('state')
     def validate_state(cls, value):
         state_pattern = re.compile(r'^[A-Z]{2}$')
         if not state_pattern.match(value):
             raise ValueError('State must be a two-letter uppercase code')
         return value
+
 
     def dict(self, **kwargs):
         """ Override the default dict method to exclude unset fields """
