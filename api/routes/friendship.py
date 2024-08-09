@@ -106,3 +106,43 @@ async def get_all_friendships_by_user(user_id: str):
         return users
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error))
+
+
+@router.get(
+    '/first-user/{first_user_id}/second-user/{second_user_id}',
+    description="Gets all the relationships that match between both users",
+    response_model=List[BasicUserSchema],
+    response_description="A list with all relationshiops that match"
+)
+async def get_all_friendships_that_match(first_user_id: str, second_user_id: str):
+    try:
+        # Get both friendships
+        first_user_friendships = await friendship_db.get_all_by_user_id(
+            user_id=first_user_id
+        )
+        second_user_frindships = await friendship_db.get_all_by_user_id(
+            user_id=second_user_id
+        )
+
+        # Both users ids
+        first_users_ids = list(set([
+            friendship[value] for friendship in first_user_friendships for value in friendship if value != 'id' and friendship[value] != first_user_id
+        ]))
+        second_users_ids = list(set([
+            friendship[value] for friendship in second_user_frindships for value in friendship if value != 'id' and friendship[value] != second_user_id
+        ]))
+
+        # match user in friendships
+        user_matched = list(
+            set(first_users_ids) & set(second_users_ids)
+            )
+
+        users = await user_db.get_user_by_list_ids(
+            users_id_list=user_matched
+        )
+
+        return users
+
+    except Exception as error:
+        raise HTTPException(status_code=400, detail=str(error))
+

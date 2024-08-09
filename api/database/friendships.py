@@ -20,3 +20,21 @@ class FriendshipDB(CRUD):
         except PyMongoError as e:
             raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
+
+    async def get_all_that_match(self, first_user_id: str, second_user_id: str):
+        collection = await self.get_collection()
+        try:
+            friendships = collection.find({
+                "$or": [
+                    {'first_user_id': {
+                            "$in": [ first_user_id, second_user_id]
+                        }
+                    },
+                    {'second_user_id': {
+                            "$in": [ first_user_id, second_user_id]
+                        }}
+                ]
+            })
+            return [basic_friendship_helper(friendship) async for friendship in friendships]
+        except PyMongoError as e:
+            raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
